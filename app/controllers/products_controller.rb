@@ -4,13 +4,18 @@ class ProductsController < ApplicationController
   # GET /products
   def index
     @products = Product.all
-
-    render json: @products
+    @products_with_image_urls = @products.map do |product|
+      image_urls = product.pictures.map { |picture| url_for(picture) }
+      { product: product, image_urls: image_urls }
+    end
+    render json: @products_with_image_urls
   end
 
   # GET /products/1
   def show
-    render json: @product
+    @product = Product.find(params[:id])
+    image_urls = @product.pictures.map { |picture| url_for(picture) }
+    render json: { product: @product, image_urls: image_urls }
   end
 
   # POST /products
